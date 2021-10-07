@@ -4,7 +4,8 @@ const fs = require("fs");
 http
    .createServer(function (req, res) {
       if(req.url === "/") {
-         fs.readFile("index.html", function(err, data){
+         // for readFile to read your html, replace text.txt with index.html
+         fs.readFile("text.txt", function(err, data){
             if (err) {
                res.end(err);
             } else {
@@ -14,6 +15,10 @@ http
                return res.end();
             }
          })
+      }
+
+      if (req.url === "/create-a-file" && req.method === "POST") {
+         res.end("OK!")
       }
    })
    .listen(3000, function() {
