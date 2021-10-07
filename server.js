@@ -3,6 +3,7 @@ const fs = require("fs");
 
 http
    .createServer(function (req, res) {
+      //this is a get
       if(req.url === "/") {
          // for readFile to read your html, replace text.txt with index.html
          fs.readFile("text.txt", function(err, data){
@@ -17,13 +18,50 @@ http
          })
       }
 
+      //this is a post
       if (req.url === "/create-a-file" && req.method === "POST") {
-         fs.writeFile("text.txt","Hello James", function(err){
-            if (err) {
-               res.end(err);
-            } else {
-               res.end("File Created")
-            }
+         let body = "";
+
+         req.on("data", function(data){
+            body += data.toString();
+         });
+
+         req.on("end", function(){
+            let parsedBody = JSON.parse(body);
+
+            fs.writeFile(parsedBody.fileName, parsedBody.message, function(err){
+               if (err) {
+                  res.end(err);
+               } else {
+                  res.end("File Created")
+               }
+            });
+         });  
+      }//do not put semicolon here
+
+
+      //this is an update NOT using PUT but still using POST
+      if(req.url === "/update-a-file" && req.method === "POST"){
+         let body = "";
+
+         req.on("data", function(data){
+            body += data.toString();
+         })
+
+         req.on("end", function(){
+            let parsedBody = JSON.parse(body);
+
+            fs.appendFile(
+               parsedBody.fileName, 
+               `\n${parsedBody.message}`, 
+               function(err){
+                  if(err){
+                     res.end(err);
+                  } else {
+                     res.end("Updated File");
+                  }
+               }
+            )
          })
       }
    })
