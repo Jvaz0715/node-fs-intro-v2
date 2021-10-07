@@ -18,7 +18,13 @@ http
       }
 
       if (req.url === "/create-a-file" && req.method === "POST") {
-         res.end("OK!")
+         fs.writeFile("text.txt","Hello James", function(err){
+            if (err) {
+               res.end(err);
+            } else {
+               res.end("File Created")
+            }
+         })
       }
    })
    .listen(3000, function() {
